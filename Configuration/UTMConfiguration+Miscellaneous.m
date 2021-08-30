@@ -38,6 +38,8 @@ const NSString *const kUTMConfigIconKey = @"Icon";
 const NSString *const kUTMConfigIconCustomKey = @"IconCustom";
 const NSString *const kUTMConfigNotesKey = @"Notes";
 
+const NSString *const kUTMConfigSnapshotKey = @"RunAsSnapshot";
+
 @interface UTMConfiguration ()
 
 @property (nonatomic, readonly) NSMutableDictionary *rootDict;
@@ -69,6 +71,7 @@ const NSString *const kUTMConfigNotesKey = @"Notes";
     if (!self.rootDict[kUTMConfigInputKey][kUTMConfigInputLegacyKey]) {
         self.inputLegacy = NO;
     }
+    self.runAsSnapshot = NO;
 }
 
 #pragma mark - Other properties
@@ -152,6 +155,15 @@ const NSString *const kUTMConfigNotesKey = @"Notes";
 
 - (nullable NSString *)notes {
     return self.rootDict[kUTMConfigInfoKey][kUTMConfigNotesKey];
+}
+
+- (void)setRunAsSnapshot:(BOOL)runAsSnapshot {
+    [self propertyWillChange];
+    self.rootDict[kUTMConfigSnapshotKey] = @(runAsSnapshot);
+}
+
+- (BOOL)runAsSnapshot {
+    return [self.rootDict[kUTMConfigSnapshotKey] boolValue];
 }
 
 @end

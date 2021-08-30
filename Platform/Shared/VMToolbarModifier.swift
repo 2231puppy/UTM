@@ -107,13 +107,8 @@ struct VMToolbarModifier: ViewModifier {
                     }.help("Stop selected VM")
                     .padding(.leading, padding)
                 } else {
-                    Button {
-                        data.run(vm: data.selectedVM!)
-                    } label: {
-                        Label("Run", systemImage: "play.fill")
-                            .labelStyle(IconOnlyLabelStyle())
-                    }.help("Run selected VM")
-                    .padding(.leading, padding)
+                    VMRunButton(padding: padding)
+                        .environmentObject(data)
                 }
                 #if !os(macOS)
                 if bottom {

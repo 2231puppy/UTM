@@ -51,11 +51,13 @@ extension UTMData {
         }
     }
     
-    func run(vm: UTMVirtualMachine) {
+    func run(vm: UTMVirtualMachine, runAsSnapshot: Bool = false) {
         guard let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else {
             logger.error("Cannot find key window")
             return
         }
+        
+        vm.configuration.runAsSnapshot = runAsSnapshot
         
         let vc = self.createDisplay(vm: vm)
         window.rootViewController = vc

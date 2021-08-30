@@ -18,7 +18,9 @@ import Foundation
 
 @available(macOS 11, *)
 extension UTMData {
-    func run(vm: UTMVirtualMachine) {
+    func run(vm: UTMVirtualMachine, runAsSnapshot: Bool = false) {
+        vm.configuration.runAsSnapshot = runAsSnapshot
+        
         var window: VMDisplayWindowController? = vmWindows[vm]
         if window == nil {
             let close = { (notification: Notification) -> Void in

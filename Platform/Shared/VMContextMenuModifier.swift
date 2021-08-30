@@ -44,6 +44,7 @@ struct VMContextMenuModifier: ViewModifier {
             } label: {
                 Label("Edit", systemImage: "slider.horizontal.3")
             }.disabled(sessionConfig.suspended || sessionConfig.active)
+            Divider()
             if sessionConfig.suspended || sessionConfig.active {
                 Button {
                     confirmAction = .confirmStopVM
@@ -56,7 +57,13 @@ struct VMContextMenuModifier: ViewModifier {
                 } label: {
                     Label("Run", systemImage: "play.fill")
                 }
+                Button {
+                    data.run(vm: vm, runAsSnapshot: true)
+                } label: {
+                    Label("Run as Snapshot", systemImage: "play")
+                }
             }
+            Divider()
             Button {
                 showSharePopup.toggle()
             } label: {

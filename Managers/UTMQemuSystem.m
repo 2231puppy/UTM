@@ -645,6 +645,10 @@ static size_t sysctl_read(const char *name) {
     // fix windows time issues
     [self pushArgv:@"-rtc"];
     [self pushArgv:@"base=localtime"];
+    
+    if (self.configuration.runAsSnapshot) {
+        [self pushArgv:@"-snapshot"];
+    }
 }
     
 - (void)argsFromUser {

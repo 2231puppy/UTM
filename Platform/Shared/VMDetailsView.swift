@@ -93,6 +93,14 @@ struct Screenshot: View {
     let large: Bool
     @EnvironmentObject private var data: UTMData
     
+    @State private var commandDown = false
+    
+    #if os(macOS)
+    private var playImageName: String { commandDown ? "play.circle" : "play.circle.fill" }
+    #else
+    private var playImageName: String { "play.circle.fill" }
+    #endif
+    
     var body: some View {
         ZStack {
             Rectangle()
@@ -111,12 +119,34 @@ struct Screenshot: View {
             Rectangle()
                 .fill(Color(red: 230/255, green: 229/255, blue: 235/255))
                 .blendMode(.hardLight)
-            Button(action: { data.run(vm: vm) }, label: {
-                Label("Run", systemImage: "play.circle.fill")
+            Button(action: { data.run(vm: vm, runAsSnapshot: commandDown) }, label: {
+                Label("Run", systemImage: playImageName)
                     .labelStyle(IconOnlyLabelStyle())
                     .font(Font.system(size: 96))
                     .foregroundColor(Color.black)
             }).buttonStyle(PlainButtonStyle())
+            .contextMenu {
+                #if !os(macOS)
+                Button {
+                    data.run(vm: data.selectedVM!)
+                } label: {
+                    Label("Run selected VM", systemImage: "play.fill")
+                }
+                Button {
+                    data.run(vm: data.selectedVM!, runAsSnapshot: true)
+                } label: {
+                    Label("Run as Snapshot", systemImage: "play")
+                }
+                #endif
+            }
+            .onAppear {
+                #if os(macOS)
+                NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged]) { event in
+                    commandDown = event.modifierFlags.contains(.command)
+                    return event
+                }
+                #endif
+            }
         }.aspectRatio(CGSize(width: 16, height: 9), contentMode: large ? .fill : .fit)
     }
 }

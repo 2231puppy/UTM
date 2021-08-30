@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, copy) NSString *icon;
 @property (nonatomic, assign) BOOL iconCustom;
 @property (nonatomic, nullable, copy) NSString *notes;
+@property (nonatomic, assign) BOOL runAsSnapshot;
 
 - (void)migrateMiscellaneousConfigurationIfNecessary;
 
