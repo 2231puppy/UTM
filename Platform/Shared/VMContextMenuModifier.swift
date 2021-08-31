@@ -60,7 +60,7 @@ struct VMContextMenuModifier: ViewModifier {
                 Button {
                     data.run(vm: vm, runAsSnapshot: true)
                 } label: {
-                    Label("Run as Snapshot", systemImage: "play")
+                    Label("Run as Snapshot", systemImage: "play.rectangle.fill")
                 }
             }
             Divider()

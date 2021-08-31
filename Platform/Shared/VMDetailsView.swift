@@ -93,10 +93,10 @@ struct Screenshot: View {
     let large: Bool
     @EnvironmentObject private var data: UTMData
     
-    @State private var commandDown = false
+    @State private var optionDown = false
     
     #if os(macOS)
-    private var playImageName: String { commandDown ? "play.circle" : "play.circle.fill" }
+    private var playImageName: String { optionDown ? "play.rectangle.fill" : "play.circle.fill" }
     #else
     private var playImageName: String { "play.circle.fill" }
     #endif
@@ -119,7 +119,7 @@ struct Screenshot: View {
             Rectangle()
                 .fill(Color(red: 230/255, green: 229/255, blue: 235/255))
                 .blendMode(.hardLight)
-            Button(action: { data.run(vm: vm, runAsSnapshot: commandDown) }, label: {
+            Button(action: { data.run(vm: vm, runAsSnapshot: optionDown) }, label: {
                 Label("Run", systemImage: playImageName)
                     .labelStyle(IconOnlyLabelStyle())
                     .font(Font.system(size: 96))
@@ -135,14 +135,13 @@ struct Screenshot: View {
                 Button {
                     data.run(vm: data.selectedVM!, runAsSnapshot: true)
                 } label: {
-                    Label("Run as Snapshot", systemImage: "play")
+                    Label("Run as Snapshot", systemImage: "play.rectangle.fill")
                 }
                 #endif
-            }
-            .onAppear {
+            }.onAppear {
                 #if os(macOS)
-                NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged]) { event in
-                    commandDown = event.modifierFlags.contains(.command)
+                NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
+                    optionDown = event.modifierFlags.contains(.option)
                     return event
                 }
                 #endif

@@ -21,10 +21,10 @@ struct VMRunButton: View {
     var padding: CGFloat
     @EnvironmentObject private var data: UTMData
 
-    @State private var commandDown = false
+    @State private var optionDown = false
 
     #if os(macOS)
-    private var playImageName: String { commandDown ? "play" : "play.fill" }
+    private var playImageName: String { optionDown ? "play.rectangle.fill" : "play.fill" }
     #else
     private var playImageName: String { "play.fill" }
     #endif
@@ -32,7 +32,7 @@ struct VMRunButton: View {
     var body: some View {
         Button {
             #if os(macOS)
-            data.run(vm: data.selectedVM!, runAsSnapshot: commandDown)
+            data.run(vm: data.selectedVM!, runAsSnapshot: optionDown)
             #else
             data.run(vm: data.selectedVM!)
             #endif
@@ -49,28 +49,30 @@ struct VMRunButton: View {
                     Button {
                         data.run(vm: data.selectedVM!, runAsSnapshot: true)
                     } label: {
-                        Label("Run as Snapshot", systemImage: "play")
+                        Label("Run as Snapshot", systemImage: "play.rectangle.fill")
                     }
                     #endif
                 }
-        }.modifier(VMRunHelpModifer(commandDown: $commandDown))
+        }.onAppear {
+            #if os(macOS)
+            NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
+                optionDown = event.modifierFlags.contains(.option)
+                return event
+            }
+            #endif
+        }
+        .modifier(VMRunHelpModifer(optionDown: optionDown))
         .padding(.leading, padding)
     }
 }
 
 @available(iOS 14, macOS 11, *)
 struct VMRunHelpModifer: ViewModifier {
-    @Binding var commandDown: Bool
+    var optionDown: Bool
 
     func body(content: Content) -> some View {
         #if os(macOS)
-        content.help(commandDown ? "Run as Snapshot" : "Run selected VM")
-            .onAppear {
-                NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged]) { event in
-                    commandDown = event.modifierFlags.contains(.command)
-                    return event
-                }
-            }
+        content.help(optionDown ? "Run as Snapshot" : "Run selected VM")
         #else
         content.help("Run selected VM")
         #endif
